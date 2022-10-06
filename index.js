@@ -6,7 +6,11 @@ const fetch = require("node-fetch");
 const fs = require("fs-extra");
 const path = require("path");
 const process = require("process");
+require('dotenv').config()
 
+const ETHERSCAN_KEY = process.env.ETHERSCAN_KEY;
+const CONTRACT = process.env.CONTRACT;
+const GOERLI = false;
 const SUCCESS_MSG = "Contracts downloaded successfully!";
 const ETHERSCAN_API = "https://api.etherscan.io/api";
 const ETHERSCAN_GOERLI_API = "https://api-goerli.etherscan.io/api";
@@ -14,12 +18,10 @@ const ETHERSCAN_FAIL_STATUS = 0;
 const BASE_CONTRACT_PATH = "contracts";
 const SOL_MOD_INCL = "@";
 const SOL_EXT = ".sol";
-const ETHERSCAN_KEY = "";
-const CONTRACT = "";
 var ContractDIR = "";
 
 let makeContractQuery = (contractAddr, isGoerli) => {
-  let esAPI = isGoerli ? ETHERSCAN_GOERLI_API : ETHERSCAN_API;
+  let esAPI = isGoerli || GOERLI ? ETHERSCAN_GOERLI_API : ETHERSCAN_API;
   let contract = contractAddr != null ? contractAddr : CONTRACT;
   let contractCodeQuery = `?module=contract&action=getsourcecode&address=${contract}&apikey=${ETHERSCAN_KEY}`;
   let reqLink = `${esAPI}${contractCodeQuery}`;
