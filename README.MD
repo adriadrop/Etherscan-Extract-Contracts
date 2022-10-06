@@ -12,7 +12,7 @@ where --g is for Goerli tesnet and for mainet just ommit the modifier
 Add .env file and add variables and values that would match
 ETHERSCAN_KEY,
 CONTRACT,
-GOERLI,
+GOERLI
 
 This is fork of https://github.com/wat96/get-contract-code with changes
 - fixed some problem like missing ES key
