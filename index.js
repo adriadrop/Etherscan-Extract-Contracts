@@ -9,7 +9,7 @@ const process = require("process");
 
 const SUCCESS_MSG = "Contracts downloaded successfully!";
 const ETHERSCAN_API = "https://api.etherscan.io/api";
-const ETHERSCAN_RINKEBY_API = "https://api-rinkeby.etherscan.io/api";
+const ETHERSCAN_GOERLI_API = "https://api-goerli.etherscan.io/api";
 const ETHERSCAN_FAIL_STATUS = 0;
 const BASE_CONTRACT_PATH = "contracts";
 const SOL_MOD_INCL = "@";
@@ -18,8 +18,8 @@ const ETHERSCAN_KEY = "";
 const CONTRACT = "";
 var ContractDIR = "";
 
-let makeContractQuery = (contractAddr, isRinkeby) => {
-  let esAPI = isRinkeby ? ETHERSCAN_RINKEBY_API : ETHERSCAN_API;
+let makeContractQuery = (contractAddr, isGoerli) => {
+  let esAPI = isGoerli ? ETHERSCAN_GOERLI_API : ETHERSCAN_API;
   let contract = contractAddr != null ? contractAddr : CONTRACT;
   let contractCodeQuery = `?module=contract&action=getsourcecode&address=${contract}&apikey=${ETHERSCAN_KEY}`;
   let reqLink = `${esAPI}${contractCodeQuery}`;
@@ -111,8 +111,8 @@ let writeContracts = (scriptsToContent) => {
   });
 };
 
-let exportMain = async (contractAddr, isRinkeby = false) => {
-  return makeContractQuery(contractAddr, isRinkeby)
+let exportMain = async (contractAddr, isGoerli = false) => {
+  return makeContractQuery(contractAddr, isGoerli)
     .then((res) => res.json())
     .then(processESRes)
     .then(writeContracts)
@@ -122,21 +122,21 @@ let exportMain = async (contractAddr, isRinkeby = false) => {
 let main = async () => {
   const parseArgsOpts = {
     alias: {
-      r: "rinkeby",
+      g: "goerli",
     },
-    boolean: ["rinkeby"],
+    boolean: ["goerli"],
     string: ["_"],
     unknown: ethers.utils.isAddress,
   };
   let parsedArgs = parseArgs(process.argv, parseArgsOpts);
   let contractAddr = parsedArgs._[0];
-  let isRinkeby = parsedArgs.rinkeby;
+  let isGoerli = parsedArgs.goerli;
 
   if (contractAddr) {
     contractAddr = ethers.utils.getAddress(contractAddr);
-    return exportMain(contractAddr, isRinkeby);
+    return exportMain(contractAddr, isGoerli);
   } else {
-    return exportMain(null, isRinkeby);
+    return exportMain(null, isGoerli);
     //throw Error("No valid contract address provided!");
   }
 };
