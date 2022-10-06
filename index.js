@@ -10,7 +10,8 @@ require('dotenv').config()
 
 const ETHERSCAN_KEY = process.env.ETHERSCAN_KEY;
 const CONTRACT = process.env.CONTRACT;
-const GOERLI = false;
+const GOERLI =  (process.env.GOERLI === 'true');
+
 const SUCCESS_MSG = "Contracts downloaded successfully!";
 const ETHERSCAN_API = "https://api.etherscan.io/api";
 const ETHERSCAN_GOERLI_API = "https://api-goerli.etherscan.io/api";
@@ -18,10 +19,11 @@ const ETHERSCAN_FAIL_STATUS = 0;
 const BASE_CONTRACT_PATH = "contracts";
 const SOL_MOD_INCL = "@";
 const SOL_EXT = ".sol";
-var ContractDIR = "";
+var ContractDIR = "sources/";
 
 let makeContractQuery = (contractAddr, isGoerli) => {
   let esAPI = isGoerli || GOERLI ? ETHERSCAN_GOERLI_API : ETHERSCAN_API;
+  console.log(esAPI);
   let contract = contractAddr != null ? contractAddr : CONTRACT;
   let contractCodeQuery = `?module=contract&action=getsourcecode&address=${contract}&apikey=${ETHERSCAN_KEY}`;
   let reqLink = `${esAPI}${contractCodeQuery}`;
@@ -65,7 +67,7 @@ let processESRes = (resObj) => {
 
   let [innerRes] = resObj.result || {};
   let resSC = innerRes.SourceCode;
-  ContractDIR = innerRes.ContractName;
+  ContractDIR = ContractDIR + innerRes.ContractName;
   let err,
     sc = unwrapSourceCode(resSC);
   if (!err) {
@@ -106,7 +108,6 @@ let writeContracts = (scriptsToContent) => {
       fullContPath = path.join(ContractDIR, BASE_CONTRACT_PATH, fullContPath);
 
     fullContPath = path.join(process.cwd(), ContractDIR, fullContPath);
-    console.log(ContractDIR);
     // write contrants to files
     fs.ensureFileSync(fullContPath, contContent);
     fs.writeFileSync(fullContPath, contContent);
