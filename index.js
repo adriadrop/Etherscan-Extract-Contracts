@@ -23,7 +23,6 @@ var ContractDIR = "sources/";
 
 let makeContractQuery = (contractAddr, isGoerli) => {
   let esAPI = isGoerli || GOERLI ? ETHERSCAN_GOERLI_API : ETHERSCAN_API;
-  console.log(esAPI);
   let contract = contractAddr != null ? contractAddr : CONTRACT;
   let contractCodeQuery = `?module=contract&action=getsourcecode&address=${contract}&apikey=${ETHERSCAN_KEY}`;
   let reqLink = `${esAPI}${contractCodeQuery}`;
